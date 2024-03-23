@@ -8,8 +8,14 @@ const initializeApp = async () => {
   await Email.sync()
 }
 
-cloudEvent<UserAddCloudEvent>('addUser', async (cloudEvent) => {
+cloudEvent<string>('addUser', async (cloudEvent) => {
   await initializeApp()
-  console.log('Received addUser event. UserId: ', cloudEvent.data?.userId)
-  await userService.handleUserAdd(cloudEvent.data)
+  console.log('Received addUser event')
+  if (cloudEvent.data === undefined) return
+
+  const decoded = Buffer.from(cloudEvent.data as string, 'base64').toString('utf-8')
+  const user = JSON.parse(decoded) as UserAddCloudEvent
+  console.log('Received addUser event. UserId: ', user?.userId)
+
+  await userService.handleUserAdd(user)
 })
