@@ -1,0 +1,27 @@
+{
+  "name": "serverless",
+  "version": "1.0.0",
+  "description": "CSYE6225 Serverless function",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "function:start": "functions-framework --target=addUser",
+    "start": "npm run build && npm run function:start"
+  },
+  "author": {
+    "firstname": "Venkata Naga Sai Teja",
+    "lastname": "Marlapati",
+    "NUID": "002756088",
+    "name": "Venkata Naga Sai Teja Marlapati",
+    "email": "marlapati.v@northeastern.edu"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/functions-framework": "^3.3.0",
+    "@sendgrid/mail": "^8.1.1",
+    "dotenv": "^16.4.5",
+    "pg": "^8.11.3",
+    "sequelize": "^6.37.1",
+    "typescript": "^5.4.3"
+  }
+}
