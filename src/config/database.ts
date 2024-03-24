@@ -88,7 +88,8 @@ const getSequelizeOptions = (connectionString: string): Options | undefined => {
         max: 10,
         min: 0,
         acquire: defaultTimeout
-      }
+      },
+      logging: false
     }
   }
   return undefined

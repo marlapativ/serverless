@@ -1,0 +1,67 @@
+name: webapp build
+
+on:
+  push:
+    branches: 
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest     
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20.11.1
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.11.1
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build source code
+        run: npm run build
+  
+      - name: Archive production artifacts
+        run: |
+          git clean -fdx
+          zip -Arq serverless.zip .
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: serverless.zip
+          path: serverless.zip
+          overwrite: true
+          compression-level: 0
+          if-no-files-found: error
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      - name: Setup gCloud
+        id: auth
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: serverless.zip
+          path: .
+
+      - name: Deploy to GCP Bucket
+        run: |
+          gsutil cp serverless.zip gs://${{ secrets.GCP_BUCKET_NAME }}

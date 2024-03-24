@@ -7,8 +7,10 @@ import database from '../config/database'
 class Email extends Model {
   public id!: string
   public user_id!: string
+  public sent_date!: Date
   public email_type!: string
-  public send_date!: Date
+  public auth_token?: string
+  public metadata?: any
   public email_created!: Date
   public email_updated!: Date
 }
@@ -25,13 +27,21 @@ Email.init(
       type: DataTypes.UUID,
       allowNull: false
     },
-    send_date: {
+    sent_date: {
       type: DataTypes.DATE,
       allowNull: false
     },
     email_type: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    auth_token: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    metadata: {
+      type: DataTypes.JSON,
+      allowNull: true
     }
   },
   {
