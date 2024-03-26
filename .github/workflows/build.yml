@@ -1,4 +1,4 @@
-name: webapp build
+name: serverless build
 
 on:
   pull_request:

@@ -1,4 +1,4 @@
-name: webapp build
+name: serverless deploy
 
 on:
   push:
