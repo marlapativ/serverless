@@ -1,12 +1,10 @@
 import { CloudEvent, cloudEvent } from '@google-cloud/functions-framework'
 import { UserAddCloudEvent, userService } from './user.service'
 import env from './config/env'
-import sendGridClient from '@sendgrid/mail'
 import database from './config/database'
 
 const initializeApp = async () => {
   env.loadEnv()
-  sendGridClient.setApiKey(env.getOrDefault('SENDGRID_API_KEY', ''))
   await database.syncDatabase()
 }
 

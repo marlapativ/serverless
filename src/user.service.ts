@@ -1,6 +1,6 @@
 import env from './config/env'
 import Email from './model/email.model'
-import sendGridClient from '@sendgrid/mail'
+import { EmailParams, EmailServiceFactory } from './services/email.service'
 
 export type UserAddCloudEvent = {
   userId: string
@@ -63,24 +63,21 @@ const sendVerificationEmail = async (addUser: UserAddCloudEvent, messageId?: str
 
   const authToken = randomString(128)
 
-  const fromEmail = env.getOrDefault('SENDGRID_FROM_EMAIL', '')
-  const verifyUrl = env.getOrDefault('VERIFY_URL', '')
+  const verifyUrlPrefix = env.getOrDefault('VERIFY_URL', '')
   const verifyEmailTemplateId = env.getOrDefault('VERIFY_EMAIL_TEMPLATE_ID', '')
-
-  // Send verification email
-  const result = await sendGridClient.send({
+  const verifyUrl = getVerifyUrl(verifyUrlPrefix, email, authToken)
+  const emailParams: EmailParams = {
     to: email,
-    from: fromEmail,
-    subject: 'Verify your email',
+    subject: 'Thanks for signing up!',
     templateId: verifyEmailTemplateId,
     dynamicTemplateData: {
-      subject: 'Thanks for signing up!',
-      verifyUrl: getVerifyUrl(verifyUrl, email, authToken)
+      verifyUrl: verifyUrl
     }
-  })
-  console.log('Verification email status: ', result[0].statusCode)
-  if (result[0].statusCode >= 300) {
-    console.error('Error sending verification email')
+  }
+
+  const result = await EmailServiceFactory.get().sendEmail(emailParams)
+  if (!result.success) {
+    console.error('Error sending verification email.')
     return
   }
 
@@ -93,10 +90,13 @@ const sendVerificationEmail = async (addUser: UserAddCloudEvent, messageId?: str
       email_type: 'VERIFY',
       auth_token: authToken,
       metadata: {
-        sendgrid: {
-          message_id: result[0].headers['x-message-id']
+        email: {
+          provider: result.provider,
+          message_id: result.messageId
         },
-        pubsub_message_id: messageId || ''
+        pubsub: {
+          message_id: messageId || ''
+        }
       }
     })
     console.log('Email record created: ', email.id)
