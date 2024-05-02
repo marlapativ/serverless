@@ -1,6 +1,6 @@
 # CSYE6225 Serverless Application
 
-[![serverless deploy](https://github.com/CSYE6225-Cloud-Computing-Organization/serverless/actions/workflows/deploy.yml/badge.svg)](https://github.com/CSYE6225-Cloud-Computing-Organization/serverless/actions/workflows/deploy.yml)
+[![serverless deploy](https://github.com/Tejamarlapati/serverless/actions/workflows/deploy.yml/badge.svg)](https://github.com/Tejamarlapati/serverless/actions/workflows/deploy.yml)
 
 ---
 
